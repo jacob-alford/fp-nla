@@ -1,0 +1,21 @@
+{
+  "env": {
+    "jest": true
+  },
+  "plugins": [],
+  "extends": [
+    "airbnb-typescript/base"
+  ],
+  "parserOptions": {
+    "project": "./tsconfig.json"
+  },
+  "rules": {
+    "@typescript-eslint/quotes": "off",
+    "max-len": "off",
+    "no-console": "off",
+    "no-restricted-syntax": "off",
+    "consistent-return": "off",
+    "no-confusing-arrow": "off",
+    "implicit-arrow-linebreak": "off"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowJs": false,
+    "target": "es6",
+    "module": "ESNext",
+    "noEmit": true,
+    "esModuleInterop": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "inlineSourceMap": true,
+    "outDir": "build",
+    "baseUrl": "src",
+    "resolveJsonModule": true,
+    "strictNullChecks": true
+  },
+  "include": [
+    "src/**/*.ts"
+  ]
+}
