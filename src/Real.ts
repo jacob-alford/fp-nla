@@ -2,7 +2,7 @@ import { pipe, identity, flow, untupled } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
 import curry from 'utils/curry';
 
-class Real {
+export class Real {
 	private readonly _real: number;
 	static readonly _tag: unique symbol;
 	constructor(value: number) {
@@ -14,6 +14,8 @@ class Real {
 }
 
 export const cons = (r: number) => new Real(r);
+
+export const r = cons;
 
 export const fold = <A>(f: (a: number) => A) => (a: Real): A =>
 	pipe(a, Real.real, f);

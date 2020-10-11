@@ -2,7 +2,7 @@ import { pipe, untupled } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
 import curry from 'utils/curry';
 
-class Complex {
+export class Complex {
 	private readonly _real: number;
 	private readonly _complex: number;
 	static readonly _tag: unique symbol;
@@ -19,6 +19,8 @@ class Complex {
 }
 
 export const cons = (r: number, c: number) => new Complex(r, c);
+
+export const c = cons;
 
 export const fold = <A>(f: (real: number, complex: number) => A) => (
 	c: Complex
