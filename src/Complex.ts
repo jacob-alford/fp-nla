@@ -1,5 +1,6 @@
-import { pipe } from 'fp-ts/lib/function';
+import { pipe, untupled } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
+import curry from 'utils/curry';
 
 class Complex {
 	private readonly _real: number;
@@ -17,12 +18,13 @@ class Complex {
 	}
 }
 
-const cons = (r: number, c: number) => new Complex(r, c);
+export const cons = (r: number, c: number) => new Complex(r, c);
 
-const fold = <A>(f: (real: number, complex: number) => A) => (c: Complex): A =>
-	f(Complex.real(c), Complex.complex(c));
+export const fold = <A>(f: (real: number, complex: number) => A) => (
+	c: Complex
+): A => f(Complex.real(c), Complex.complex(c));
 
-const elConcat = (f: (a: number, b: number) => number) => (
+export const elConcat = (f: (a: number, b: number) => number) => (
 	a: Complex,
 	b: Complex
 ): Complex =>
@@ -33,7 +35,7 @@ const elConcat = (f: (a: number, b: number) => number) => (
 
 export const concat = (
 	f: (c1R: number, c1C: number, c2R: number, c2C: number) => Complex
-) => (c1: Complex, c2: Complex): Complex =>
+) => ([c1, c2]: [Complex, Complex]): Complex =>
 	f(
 		Complex.real(c1),
 		Complex.complex(c1),
@@ -65,13 +67,24 @@ export const complex: Field<Complex> = {
 	degree: fold((r, c) => Math.sqrt(Math.pow(r, 2) + Math.pow(c, 2))),
 	add: elConcat((a, b) => a + b),
 	sub: elConcat((a, b) => a - b),
-	mul: concat((r1, c1, r2, c2) => cons(r1 * r2 - c1 * c2, r1 * c2 + r2 * c1)),
-	div: concat((a, b, c, d) =>
-		((denom) => cons((a * c + b * d) / denom, (a * d + c * b) / denom))(
-			c * c - d * d
+	mul: untupled(concat((a, b, c, d) => cons(a * c - b * d, a * d + c * b))),
+	div: untupled(
+		concat((a, b, c, d) =>
+			((denom) => cons((a * c + b * d) / denom, (b * c - a * d) / denom))(
+				c * c + d * d
+			)
 		)
 	),
-	mod: elConcat((a, b) => a % b),
+	mod: () => cons(0, 0),
 	zero: cons(0, 0),
 	one: cons(1, 0),
 };
+
+export const degree = complex.degree;
+export const add = curry(complex.add);
+export const sub = curry(complex.sub);
+export const mul = curry(complex.mul);
+export const div = curry(complex.div);
+export const mod = curry(complex.mod);
+export const zero = complex.zero;
+export const one = complex.one;

@@ -1,29 +1,32 @@
 {
-  "name": "fp-mat",
-  "version": "0.0.1",
-  "description": "fp-ts style matrix library",
-  "main": "index.ts",
-  "author": "Jacob Alford",
-  "license": "MIT",
-  "private": false,
-  "dependencies": {
-    "fp-ts": "^2.8.3",
-    "newtype-ts": "^0.3.4",
-    "typescript": "^4.0.3"
-  },
-  "devDependencies": {
-    "eslint": "^7.11.0",
-    "eslint-config-airbnb-typescript": "^11.0.0",
-    "eslint-plugin-import": "^2.22.1",
-    "jest": "^26.5.2",
-    "ts-jest": "^26.4.1",
-    "tsconfig-paths": "^3.9.0"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ]
-  }
+	"name": "fp-mat",
+	"version": "0.0.1",
+	"description": "fp-ts style matrix library",
+	"main": "index.ts",
+	"author": "Jacob Alford",
+	"license": "MIT",
+	"private": false,
+	"scripts": {
+		"test": "jest --watch-all"
+	},
+	"dependencies": {
+		"fp-ts": "^2.8.3",
+		"newtype-ts": "^0.3.4",
+		"typescript": "^4.0.3"
+	},
+	"devDependencies": {
+		"eslint": "^7.11.0",
+		"eslint-config-airbnb-typescript": "^11.0.0",
+		"eslint-plugin-import": "^2.22.1",
+		"jest": "^26.5.2",
+		"ts-jest": "^26.4.1",
+		"tsconfig-paths": "^3.9.0"
+	},
+	"jest": {
+		"preset": "ts-jest",
+		"moduleDirectories": [
+			"node_modules",
+			"src"
+		]
+	}
 }
