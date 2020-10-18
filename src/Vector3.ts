@@ -6,6 +6,12 @@ import * as R from 'Real';
 
 export type Vector3 = readonly [R.Real, R.Real, R.Real];
 
+export const cons = (x1: number, x2: number, x3: number): Vector3 => [
+	R.cons(x1),
+	R.cons(x2),
+	R.cons(x3),
+];
+
 export const fromVec = (vector: V.RealVector): O.Option<Vector3> =>
 	pipe(
 		vector,
@@ -24,11 +30,19 @@ export const cross = (
 	R.sub(R.mul(a1)(b2))(R.mul(a2)(b1)),
 ];
 
-export const norm = ([x1, x2, x3]: Vector3): R.Real =>
+const square = (v: number): number => v ** 2;
+
+export const map = (f: (a: number) => number) => ([
+	x1,
+	x2,
+	x3,
+]: Vector3): Vector3 => [R.map(f)(x1), R.map(f)(x2), R.map(f)(x3)];
+
+export const norm = (v: Vector3): R.Real =>
 	pipe(
-		R.add(R.add(R.map((v) => v ** 2)(x1))(R.map((v) => v ** 2)(x2)))(
-			R.map((v) => v ** 2)(x2)
-		),
+		v,
+		map(square),
+		([x1, x2, x3]) => pipe(x3, R.add(pipe(x2, R.add(x1)))),
 		R.map(Math.sqrt)
 	);
 
