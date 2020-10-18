@@ -2,56 +2,44 @@ import { pipe, untupled } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
 import curry from 'utils/curry';
 
-export class Complex {
-	private readonly _real: number;
-	private readonly _complex: number;
-	static readonly _tag: unique symbol;
-	constructor(real: number, complex: number) {
-		this._real = real;
-		this._complex = complex;
-	}
-	static real(a: Complex) {
-		return a._real;
-	}
-	static complex(a: Complex) {
-		return a._complex;
-	}
+export interface Complex {
+	_tag: 'Complex';
+	real: number;
+	complex: number;
 }
 
-export const cons = (r: number, c: number) => new Complex(r, c);
+export const cons = (real: number, complex: number): Complex => ({
+	_tag: 'Complex',
+	real,
+	complex,
+});
 
 export const c = cons;
 
+const getReal = (c: Complex) => c.real;
+const getComplex = (c: Complex) => c.complex;
+
 export const fold = <A>(f: (real: number, complex: number) => A) => (
 	c: Complex
-): A => f(Complex.real(c), Complex.complex(c));
+): A => f(getReal(c), getComplex(c));
 
 export const elConcat = (f: (a: number, b: number) => number) => (
 	a: Complex,
 	b: Complex
-): Complex =>
-	cons(
-		f(Complex.real(a), Complex.real(b)),
-		f(Complex.complex(a), Complex.complex(b))
-	);
+): Complex => cons(f(getReal(a), getReal(b)), f(getComplex(a), getComplex(b)));
 
 export const concat = (
 	f: (c1R: number, c1C: number, c2R: number, c2C: number) => Complex
 ) => ([c1, c2]: [Complex, Complex]): Complex =>
-	f(
-		Complex.real(c1),
-		Complex.complex(c1),
-		Complex.real(c2),
-		Complex.complex(c2)
-	);
+	f(getReal(c1), getComplex(c1), getReal(c2), getComplex(c2));
 
 const mapR = (f: (a: number) => number) => (a: Complex): Complex =>
-	pipe(a, Complex.real, f, (newReal) =>
-		pipe(a, Complex.complex, (complexPart) => cons(newReal, complexPart))
+	pipe(a, getReal, f, (newReal) =>
+		pipe(a, getComplex, (complexPart) => cons(newReal, complexPart))
 	);
 const mapC = (f: (a: number) => number) => (a: Complex): Complex =>
-	pipe(a, Complex.complex, f, (newComplex) =>
-		pipe(a, Complex.real, (realPart) => cons(realPart, newComplex))
+	pipe(a, getComplex, f, (newComplex) =>
+		pipe(a, getReal, (realPart) => cons(realPart, newComplex))
 	);
 export const map = (
 	realF: (a: number) => number,
@@ -60,10 +48,9 @@ export const map = (
 
 export const chain = (f: (real: number, complex: number) => Complex) => (
 	c: Complex
-): Complex => f(Complex.real(c), Complex.complex(c));
+): Complex => f(getReal(c), getComplex(c));
 
-export const show = (a: Complex): string =>
-	`(${Complex.real(a)}, ${Complex.complex(a)})`;
+export const show = (a: Complex): string => `(${getReal(a)}, ${getComplex(a)})`;
 
 export const complex: Field<Complex> = {
 	degree: fold((r, c) => Math.sqrt(Math.pow(r, 2) + Math.pow(c, 2))),

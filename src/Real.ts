@@ -2,23 +2,19 @@ import { pipe, identity, flow, untupled } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
 import curry from 'utils/curry';
 
-export class Real {
-	private readonly _real: number;
-	static readonly _tag: unique symbol;
-	constructor(value: number) {
-		this._real = value;
-	}
-	static real(a: Real): number {
-		return a._real;
-	}
+export interface Real {
+	_tag: 'Real';
+	real: number;
 }
 
-export const cons = (r: number) => new Real(r);
+export const cons = (real: number): Real => ({ real, _tag: 'Real' });
+
+const getReal = (r: Real) => r.real;
 
 export const r = cons;
 
 export const fold = <A>(f: (a: number) => A) => (a: Real): A =>
-	pipe(a, Real.real, f);
+	pipe(a, getReal, f);
 
 export const concat = (f: (a: number, b: number) => number) => ([a, b]: [
 	Real,
@@ -26,14 +22,14 @@ export const concat = (f: (a: number, b: number) => number) => ([a, b]: [
 ]): Real => pipe(f(pipe(a, fold(identity)), pipe(b, fold(identity))), cons);
 
 export const map = (f: (a: number) => number) => (a: Real): Real =>
-	pipe(a, Real.real, f, cons);
+	pipe(a, getReal, f, cons);
 
 export const chain: (f: (a: number) => Real) => (a: Real) => Real = fold;
 
-export const show: (a: Real) => string = flow(Real.real, String);
+export const show: (a: Real) => string = flow(getReal, String);
 
 export const real: Field<Real> = {
-	degree: Real.real,
+	degree: getReal,
 	add: untupled(concat((a, b) => a + b)),
 	sub: untupled(concat((a, b) => a - b)),
 	mul: untupled(concat((a, b) => a * b)),
