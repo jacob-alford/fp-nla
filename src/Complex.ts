@@ -53,7 +53,7 @@ export const chain = (f: (real: number, complex: number) => Complex) => (
 export const show = (a: Complex): string => `(${getReal(a)}, ${getComplex(a)})`;
 
 export const complex: Field<Complex> = {
-	degree: fold((r, c) => Math.sqrt(Math.pow(r, 2) + Math.pow(c, 2))),
+	degree: fold((r, c) => Math.sqrt(r ** 2 + c ** 2)),
 	add: elConcat((a, b) => a + b),
 	sub: elConcat((a, b) => a - b),
 	mul: untupled(concat((a, b, c, d) => cons(a * c - b * d, a * d + c * b))),
