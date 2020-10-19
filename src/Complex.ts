@@ -1,5 +1,6 @@
-import { pipe, untupled } from 'fp-ts/lib/function';
+import { pipe, untupled, identity } from 'fp-ts/lib/function';
 import { Field } from 'fp-ts/lib/Field';
+import { Ord } from 'fp-ts/lib/Ord';
 import curry from 'utils/curry';
 
 export interface Complex {
@@ -33,18 +34,18 @@ export const concat = (
 ) => ([c1, c2]: [Complex, Complex]): Complex =>
 	f(getReal(c1), getComplex(c1), getReal(c2), getComplex(c2));
 
-const mapR = (f: (a: number) => number) => (a: Complex): Complex =>
+export const mapReal = (f: (a: number) => number) => (a: Complex): Complex =>
 	pipe(a, getReal, f, (newReal) =>
 		pipe(a, getComplex, (complexPart) => cons(newReal, complexPart))
 	);
-const mapC = (f: (a: number) => number) => (a: Complex): Complex =>
+export const mapComplex = (f: (a: number) => number) => (a: Complex): Complex =>
 	pipe(a, getComplex, f, (newComplex) =>
 		pipe(a, getReal, (realPart) => cons(realPart, newComplex))
 	);
-export const map = (
+export const bimap = (
 	realF: (a: number) => number,
 	complexF: (a: number) => number
-) => (a: Complex): Complex => pipe(a, mapR(realF), mapC(complexF));
+) => (a: Complex): Complex => pipe(a, mapReal(realF), mapComplex(complexF));
 
 export const chain = (f: (real: number, complex: number) => Complex) => (
 	c: Complex
@@ -52,7 +53,7 @@ export const chain = (f: (real: number, complex: number) => Complex) => (
 
 export const show = (a: Complex): string => `(${getReal(a)}, ${getComplex(a)})`;
 
-export const complex: Field<Complex> = {
+export const complex: Field<Complex> & Ord<Complex> = {
 	degree: fold((r, c) => Math.sqrt(r ** 2 + c ** 2)),
 	add: elConcat((a, b) => a + b),
 	sub: elConcat((a, b) => a - b),
@@ -67,6 +68,9 @@ export const complex: Field<Complex> = {
 	mod: () => cons(0, 0),
 	zero: cons(0, 0),
 	one: cons(1, 0),
+	equals: (a, b) => a.real === b.real && a.complex === b.complex,
+	compare: (a, b) =>
+		((da, db) => (da > db ? 1 : da < db ? -1 : 0))(degree(a), degree(b)),
 };
 
 export const degree = complex.degree;
@@ -77,3 +81,4 @@ export const div = curry(complex.div);
 export const mod = curry(complex.mod);
 export const zero = complex.zero;
 export const one = complex.one;
+export const equals = complex.equals;

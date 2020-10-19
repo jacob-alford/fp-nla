@@ -1,7 +1,8 @@
 import { Group } from 'fp-ts/lib/Group';
+import { Ord } from 'fp-ts/lib/Ord';
 import { pipe } from 'fp-ts/lib/function';
 import * as O from 'fp-ts/lib/Option';
-import * as V from 'Vector';
+import * as RV from 'RealVector';
 import * as R from 'Real';
 
 export type Vector3 = readonly [R.Real, R.Real, R.Real];
@@ -12,14 +13,14 @@ export const cons = (x1: number, x2: number, x3: number): Vector3 => [
 	R.cons(x3),
 ];
 
-export const fromVec = (vector: V.RealVector): O.Option<Vector3> =>
+export const fromVec = (vector: RV.RealVector): O.Option<Vector3> =>
 	pipe(
 		vector,
 		O.fromPredicate((v) => v.length >= 3),
 		O.map(([x1, x2, x3]) => [x1, x2, x3])
 	);
 
-export const toVec = (vector: Vector3): V.RealVector => vector;
+export const toVec = (vector: Vector3): RV.RealVector => vector;
 
 export const cross = (
 	[a1, a2, a3]: Vector3,
@@ -38,15 +39,10 @@ export const map = (f: (a: number) => number) => ([
 	x3,
 ]: Vector3): Vector3 => [R.map(f)(x1), R.map(f)(x2), R.map(f)(x3)];
 
-export const norm = (v: Vector3): R.Real =>
-	pipe(
-		v,
-		map(square),
-		([x1, x2, x3]) => pipe(x3, R.add(pipe(x2, R.add(x1)))),
-		R.map(Math.sqrt)
-	);
+export const norm: (v: Vector3) => R.Real = RV.norm;
 
-export const vector3: Group<Vector3> = {
+export const vector3: Group<Vector3> & Ord<Vector3> = {
+	...RV.realVector(3),
 	empty: [R.zero, R.zero, R.zero],
 	concat: ([x1, x2, x3], [y1, y2, y3]) => [
 		R.real.add(x1, y1),
