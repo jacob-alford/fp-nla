@@ -37,3 +37,7 @@ export const realVector = (
 export const map: (
 	f: (a: number) => number
 ) => (rv: RealVector) => RealVector = flow(R.map, RA.map);
+
+export const sum: (rv: RealVector) => R.Real = reduce(R.zero, (acc, next) =>
+	R.add(acc)(R.cons(next))
+);

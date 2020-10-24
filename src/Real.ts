@@ -53,3 +53,4 @@ export const mod = curry(real.mod);
 export const zero = real.zero;
 export const one = real.one;
 export const equals = real.equals;
+export const abs: (r: Real) => Real = map(Math.abs);
