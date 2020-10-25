@@ -16,7 +16,8 @@ export const fNorm: (A: RealMatrix) => R.Real = flow(
 			RV.sum
 		)
 	),
-	RV.sum
+	RV.sum,
+	R.map(Math.sqrt)
 );
 
 export const realMatrix = (
