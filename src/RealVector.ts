@@ -65,4 +65,4 @@ export const elMul = (
   );
 
 export const dot = (a: RealVector, b: RealVector): E.Either<Error, R.Real> =>
-  pipe();
+  pipe(elMul(a, b), E.map(total));
